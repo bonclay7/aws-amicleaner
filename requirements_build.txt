@@ -2,7 +2,7 @@ boto
 blessings==1.6
 codecov==2.0.5
 boto3==1.4.0
-moto
+moto==0.4.25
 prettytable==7
 pytest
 pytest-pep8
