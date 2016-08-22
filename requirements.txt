@@ -1,4 +1,4 @@
-awscli
+awscli==1.10.58
 argparse==1.4.0
 boto
 boto3==1.4.0
