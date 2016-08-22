@@ -4,6 +4,6 @@ codecov==2.0.5
 boto3==1.4.0
 moto==0.4.25
 prettytable==7
-pytest
+pytest==3.0.0
 pytest-pep8==1.0.6
 pytest-cov==2.3.1
