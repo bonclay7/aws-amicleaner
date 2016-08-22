@@ -3,4 +3,4 @@ argparse
 boto
 boto3
 prettytable
-blessings
+blessings==1.6
