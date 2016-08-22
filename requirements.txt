@@ -2,5 +2,5 @@ awscli
 argparse==1.4.0
 boto
 boto3==1.4.0
-prettytable
+prettytable==7
 blessings==1.6
