@@ -1,5 +1,5 @@
 awscli
-argparse
+argparse==1.4.0
 boto
 boto3==1.4.0
 prettytable
