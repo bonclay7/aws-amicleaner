@@ -1,5 +1,5 @@
 boto
-blessings
+blessings==1.6
 codecov
 boto3
 moto
