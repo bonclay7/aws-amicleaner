@@ -2,7 +2,7 @@ boto
 blessings
 codecov
 boto3
-moto
+moto==0.4.25
 prettytable
 pytest
 pytest-pep8
