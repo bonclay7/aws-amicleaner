@@ -1,6 +1,6 @@
 boto
 blessings
-codecov
+codecov==2.0.5
 boto3
 moto
 prettytable
