@@ -3,7 +3,7 @@ blessings
 codecov
 boto3
 moto
-prettytable
+prettytable==7
 pytest
 pytest-pep8
 pytest-cov
