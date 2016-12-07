@@ -1,4 +1,4 @@
-boto
+boto==2.42.0
 blessings
 codecov
 boto3
