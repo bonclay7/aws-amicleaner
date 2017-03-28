@@ -1,7 +1,7 @@
 boto
 blessings==1.6
 codecov
-boto3
+boto3==1.4.0
 moto
 prettytable
 pytest
