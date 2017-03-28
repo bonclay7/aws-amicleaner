@@ -4,6 +4,6 @@ codecov
 boto3
 moto
 prettytable
-pytest
+pytest==3.0.0
 pytest-pep8
 pytest-cov
