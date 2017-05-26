@@ -4,5 +4,5 @@ codecov
 moto
 pep8>=1.7.0
 pytest
-pytest-pep8
+pytest-pep8==1.0.6
 pytest-cov
