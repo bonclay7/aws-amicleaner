@@ -5,4 +5,4 @@ moto
 pep8>=1.7.0
 pytest
 pytest-pep8
-pytest-cov
+pytest-cov==2.3.1
