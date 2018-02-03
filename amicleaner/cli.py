@@ -120,10 +120,13 @@ class App:
 
         Printer.print_orphan_snapshots(snaps)
 
-        answer = raw_input(
-            "Do you want to continue and remove {} orphan snapshots "
-            "[y/N] ? : ".format(len(snaps)))
-        confirm = (answer.lower() == "y")
+        if not self.force_delete:
+            answer = raw_input(
+                "Do you want to continue and remove {} orphan snapshots "
+                "[y/N] ? : ".format(len(snaps)))
+            confirm = (answer.lower() == "y")
+        else:
+            confirm = True
 
         if confirm:
             print "Removing orphan snapshots... "
