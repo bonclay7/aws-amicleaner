@@ -48,7 +48,49 @@ def test_tags_values_to_string():
 
     tags_values_string = AMICleaner.tags_values_to_string(longer_tags, longer_filters)
     assert tags_values_string is not None
-    assert tags_values_string == "LongerValue.Value2.Value3"
+    assert tags_values_string == "Value2.Value3.LongerValue"
+
+
+def test_tags_values_to_string_proper_binning():
+
+    # Image One tags: role: test, env: test, user: build
+    image_one_role = AWSTag()
+    image_one_role.key = "role"
+    image_one_role.value = "test"
+
+    image_one_env = AWSTag()
+    image_one_env.key = "env"
+    image_one_env.value = "test"
+
+    image_one_user = AWSTag()
+    image_one_user.key = "user"
+    image_one_user.value = "build"
+
+    image_one_tags = [image_one_role, image_one_env, image_one_user]
+
+    # Image Two tags: role: build, env: test, user: test
+
+    image_two_role = AWSTag()
+    image_two_role.key = "role"
+    image_two_role.value = "build"
+
+    image_two_env = AWSTag()
+    image_two_env.key = "env"
+    image_two_env.value = "test"
+
+    image_two_user = AWSTag()
+    image_two_user.key = "user"
+    image_two_user.value = "test"
+
+    image_two_tags = [image_two_role, image_two_env, image_two_user]
+
+    filters = ["role", "env", "user"]
+
+    image_one_tags_values_string = AMICleaner.tags_values_to_string(image_one_tags, filters)
+    image_two_tags_values_string = AMICleaner.tags_values_to_string(image_two_tags, filters)
+    assert image_one_tags_values_string is not None
+    assert image_two_tags_values_string is not None
+    assert image_one_tags_values_string != image_two_tags_values_string
 
 
 def test_tags_values_to_string_with_none():

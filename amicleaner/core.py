@@ -229,13 +229,16 @@ class AMICleaner(object):
 
         filters = filters or []
 
-        for tag in tags:
-            if not filters:
-                tag_values.append(tag.value)
-            elif tag.key in filters:
-                tag_values.append(tag.value)
+        if not filters:
+            tag_values = [tag.value for tag in sorted(tags, key=lambda tag:tag.key)]
+        else:
+            tag_map = dict([(tag.key, tag.value,) for tag in tags])
+            for tag_filter in sorted(filters):
+                value = tag_map.get(tag_filter)
+                if value:
+                    tag_values.append(value)
 
-        return ".".join(sorted(tag_values))
+        return ".".join(tag_values)
 
     def reduce_candidates(self, mapped_candidates_ami, keep_previous=0, ami_min_days=-1):
 
