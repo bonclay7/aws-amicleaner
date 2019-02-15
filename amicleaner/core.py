@@ -228,12 +228,11 @@ class AMICleaner(object):
         tag_values = []
 
         filters = filters or []
-        filters_to_string = ".".join(filters)
 
         for tag in tags:
             if not filters:
                 tag_values.append(tag.value)
-            elif tag.key in filters_to_string:
+            elif tag.key in filters:
                 tag_values.append(tag.value)
 
         return ".".join(sorted(tag_values))

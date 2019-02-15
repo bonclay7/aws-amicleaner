@@ -28,12 +28,27 @@ def test_tags_values_to_string():
     fourth_tag.key = "Key4"
     fourth_tag.value = "Value4"
 
+    long_tag = AWSTag()
+    long_tag.key = "long-tag"
+    long_tag.value = "LongValue"
+
+    longer_tag = AWSTag()
+    longer_tag.key = "long-tag-longer"
+    longer_tag.value = "LongerValue"
+
     tags = [first_tag, third_tag, second_tag, fourth_tag]
     filters = ["Key2", "Key3"]
 
     tags_values_string = AMICleaner.tags_values_to_string(tags, filters)
     assert tags_values_string is not None
     assert tags_values_string == "Value2.Value3"
+
+    longer_tags = [first_tag, third_tag, second_tag, fourth_tag, long_tag, longer_tag]
+    longer_filters = ["Key2", "Key3", "long-tag-longer"]
+
+    tags_values_string = AMICleaner.tags_values_to_string(longer_tags, longer_filters)
+    assert tags_values_string is not None
+    assert tags_values_string == "LongerValue.Value2.Value3"
 
 
 def test_tags_values_to_string_with_none():
