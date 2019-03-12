@@ -2,5 +2,6 @@ awscli
 argparse
 boto
 boto3
+future
 prettytable
 blessings==1.6
