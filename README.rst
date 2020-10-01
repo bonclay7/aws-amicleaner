@@ -96,6 +96,17 @@ You can also clone or download from github the source and install with pip
     cd aws-amicleaner/
     pip install [--user] -e .
 
+With docker
+~~~~~~~~~~~
+
+You can also clone or download from github the source and build a docker image
+
+.. code:: bash
+
+    cd aws-amicleaner/
+    docker build -t amicleaner .
+    docker run -it --rm amicleaner
+
 Usage
 -----
 
