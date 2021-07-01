@@ -65,9 +65,7 @@ class Fetcher(object):
         """
 
         resp = self.asg.describe_auto_scaling_groups()
-        zeroed_lcs = [asg.get("LaunchConfigurationName", "")
-                      for asg in resp.get("AutoScalingGroups", [])
-                      if asg.get("DesiredCapacity", 0) == 0]
+        zeroed_lcs = [asg.get("LaunchConfigurationName", "") for asg in resp.get("AutoScalingGroups", []) if asg.get("DesiredCapacity", 0) == 0 and "LaunchConfigurationName" in asg]
 
         resp = self.asg.describe_launch_configurations(
             LaunchConfigurationNames=zeroed_lcs
