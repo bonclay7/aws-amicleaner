@@ -28,12 +28,69 @@ def test_tags_values_to_string():
     fourth_tag.key = "Key4"
     fourth_tag.value = "Value4"
 
+    long_tag = AWSTag()
+    long_tag.key = "long-tag"
+    long_tag.value = "LongValue"
+
+    longer_tag = AWSTag()
+    longer_tag.key = "long-tag-longer"
+    longer_tag.value = "LongerValue"
+
     tags = [first_tag, third_tag, second_tag, fourth_tag]
     filters = ["Key2", "Key3"]
 
     tags_values_string = AMICleaner.tags_values_to_string(tags, filters)
     assert tags_values_string is not None
     assert tags_values_string == "Value2.Value3"
+
+    longer_tags = [first_tag, third_tag, second_tag, fourth_tag, long_tag, longer_tag]
+    longer_filters = ["Key2", "Key3", "long-tag-longer"]
+
+    tags_values_string = AMICleaner.tags_values_to_string(longer_tags, longer_filters)
+    assert tags_values_string is not None
+    assert tags_values_string == "Value2.Value3.LongerValue"
+
+
+def test_tags_values_to_string_proper_binning():
+
+    # Image One tags: role: test, env: test, user: build
+    image_one_role = AWSTag()
+    image_one_role.key = "role"
+    image_one_role.value = "test"
+
+    image_one_env = AWSTag()
+    image_one_env.key = "env"
+    image_one_env.value = "test"
+
+    image_one_user = AWSTag()
+    image_one_user.key = "user"
+    image_one_user.value = "build"
+
+    image_one_tags = [image_one_role, image_one_env, image_one_user]
+
+    # Image Two tags: role: build, env: test, user: test
+
+    image_two_role = AWSTag()
+    image_two_role.key = "role"
+    image_two_role.value = "build"
+
+    image_two_env = AWSTag()
+    image_two_env.key = "env"
+    image_two_env.value = "test"
+
+    image_two_user = AWSTag()
+    image_two_user.key = "user"
+    image_two_user.value = "test"
+
+    image_two_tags = [image_two_role, image_two_env, image_two_user]
+
+    filters = ["role", "env", "user"]
+
+    image_one_tags_values_string = AMICleaner.tags_values_to_string(image_one_tags, filters)
+    image_two_tags_values_string = AMICleaner.tags_values_to_string(image_two_tags, filters)
+    assert image_one_tags_values_string is not None
+    assert image_two_tags_values_string is not None
+    assert image_one_tags_values_string != image_two_tags_values_string
 
 
 def test_tags_values_to_string_with_none():
