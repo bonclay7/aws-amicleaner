@@ -8,11 +8,11 @@ from builtins import object
 import sys
 
 from amicleaner import __version__
-from .core import AMICleaner, OrphanSnapshotCleaner
-from .fetch import Fetcher
-from .resources.config import MAPPING_KEY, MAPPING_VALUES, EXCLUDED_MAPPING_VALUES
-from .resources.config import TERM
-from .utils import Printer, parse_args
+from core import AMICleaner, OrphanSnapshotCleaner
+from fetch import Fetcher
+from resources.config import MAPPING_KEY, MAPPING_VALUES, EXCLUDED_MAPPING_VALUES
+from resources.config import TERM
+from utils import Printer, parse_args
 
 
 class App(object):

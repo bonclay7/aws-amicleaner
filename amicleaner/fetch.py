@@ -5,8 +5,8 @@ from __future__ import absolute_import
 from builtins import object
 import boto3
 from botocore.config import Config
-from .resources.config import BOTO3_RETRIES
-from .resources.models import AMI
+from resources.config import BOTO3_RETRIES
+from resources.models import AMI
 
 
 class Fetcher(object):

@@ -8,8 +8,8 @@ import boto3
 from botocore.exceptions import ClientError
 from botocore.config import Config
 
-from .resources.config import BOTO3_RETRIES
-from .resources.models import AMI
+from resources.config import BOTO3_RETRIES
+from resources.models import AMI
 
 from datetime import datetime
 
@@ -30,7 +30,7 @@ class OrphanSnapshotCleaner(object):
             ]}, {
             'Name': 'description',
             'Values': [
-                'Created by CreateImage*'
+                'Created by CreateImage*','','Copied for DestinationAmi*'
             ]
         }]
 
