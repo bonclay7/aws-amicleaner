@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from builtins import object
 import boto3
 from botocore.config import Config
-from .resources.config import BOTO3_RETRIES
+from .resources.config import BOTO3_RETRIES, OWNER_ID
 from .resources.models import AMI
 
 
@@ -13,12 +13,13 @@ class Fetcher(object):
 
     """ Fetches function for AMI candidates to deletion """
 
-    def __init__(self, ec2=None, autoscaling=None):
+    def __init__(self, ec2=None, autoscaling=None, owner_id=None):
 
         """ Initializes aws sdk clients """
 
         self.ec2 = ec2 or boto3.client('ec2', config=Config(retries={'max_attempts': BOTO3_RETRIES}))
         self.asg = autoscaling or boto3.client('autoscaling')
+        self.owner_id = owner_id or OWNER_ID
 
     def fetch_available_amis(self):
 
@@ -26,7 +27,7 @@ class Fetcher(object):
 
         available_amis = dict()
 
-        my_custom_images = self.ec2.describe_images(Owners=['self'])
+        my_custom_images = self.ec2.describe_images(Owners=[self.owner_id])
         for image_json in my_custom_images.get('Images'):
             ami = AMI.object_with_json(image_json)
             available_amis[ami.id] = ami

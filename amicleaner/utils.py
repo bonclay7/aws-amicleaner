@@ -8,7 +8,7 @@ import argparse
 
 from prettytable import PrettyTable
 
-from .resources.config import KEEP_PREVIOUS, AMI_MIN_DAYS
+from .resources.config import KEEP_PREVIOUS, AMI_MIN_DAYS, OWNER_ID
 
 
 class Printer(object):
@@ -118,6 +118,12 @@ def parse_args(args):
                         default=AMI_MIN_DAYS,
                         help="Number of days AMI to keep excluding those "
                              "currently being running")
+
+    parser.add_argument("--owner-id",
+                        dest='owner_id',
+                        default=OWNER_ID,
+                        help="Owner of the images to clean: "
+                             "[self|amazon|aws-marketplace|123456]")
 
     parsed_args = parser.parse_args(args)
     if parsed_args.mapping_key and not parsed_args.mapping_values:

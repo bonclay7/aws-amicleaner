@@ -10,7 +10,7 @@ import sys
 from amicleaner import __version__
 from .core import AMICleaner, OrphanSnapshotCleaner
 from .fetch import Fetcher
-from .resources.config import MAPPING_KEY, MAPPING_VALUES, EXCLUDED_MAPPING_VALUES
+from .resources.config import MAPPING_KEY, MAPPING_VALUES, EXCLUDED_MAPPING_VALUES, OWNER_ID
 from .resources.config import TERM
 from .utils import Printer, parse_args
 
@@ -29,6 +29,7 @@ class App(object):
         self.full_report = args.full_report
         self.force_delete = args.force_delete
         self.ami_min_days = args.ami_min_days
+        self.owner_id = args.owner_id or OWNER_ID
 
         self.mapping_strategy = {
             "key": self.mapping_key,
@@ -43,7 +44,7 @@ class App(object):
         AMIs from ec2 instances, launch configurations, autoscaling groups
         and returns unused AMIs.
         """
-        f = Fetcher()
+        f = Fetcher(owner_id=self.owner_id)
 
         available_amis = available_amis or f.fetch_available_amis()
         excluded_amis = excluded_amis or []
@@ -68,7 +69,7 @@ class App(object):
         if not candidates_amis:
             return None
 
-        c = AMICleaner()
+        c = AMICleaner(owner_id=self.owner_id)
 
         mapped_amis = c.map_candidates(
             candidates_amis=candidates_amis,
@@ -119,7 +120,7 @@ class App(object):
 
         """ Find and removes orphan snapshots """
 
-        cleaner = OrphanSnapshotCleaner()
+        cleaner = OrphanSnapshotCleaner(owner_id=self.owner_id)
         snaps = cleaner.fetch()
 
         if not snaps:
@@ -140,6 +141,7 @@ class App(object):
     def print_defaults(self):
 
         print(TERM.bold("\nDefault values : ==>"))
+        print(TERM.green("owner_id : {0}".format(self.owner_id)))
         print(TERM.green("mapping_key : {0}".format(self.mapping_key)))
         print(TERM.green("mapping_values : {0}".format(self.mapping_values)))
         print(TERM.green("excluded_mapping_values : {0}".format(self.excluded_mapping_values)))

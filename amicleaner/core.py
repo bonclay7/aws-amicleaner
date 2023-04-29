@@ -8,7 +8,7 @@ import boto3
 from botocore.exceptions import ClientError
 from botocore.config import Config
 
-from .resources.config import BOTO3_RETRIES
+from .resources.config import BOTO3_RETRIES, OWNER_ID
 from .resources.models import AMI
 
 from datetime import datetime
@@ -18,8 +18,9 @@ class OrphanSnapshotCleaner(object):
 
     """ Finds and removes ebs snapshots left orphaned """
 
-    def __init__(self, ec2=None):
+    def __init__(self, ec2=None, owner_id=None):
         self.ec2 = ec2 or boto3.client('ec2', config=Config(retries={'max_attempts': BOTO3_RETRIES}))
+        self.owner_id = owner_id or OWNER_ID
 
     def get_snapshots_filter(self):
 
@@ -49,7 +50,7 @@ class OrphanSnapshotCleaner(object):
 
         """ retrieve orphan snapshots """
 
-        resp = self.ec2.describe_images(Owners=['self'])
+        resp = self.ec2.describe_images(Owners=[self.owner_id])
 
         used_snaps = [
             ebs.get("Ebs", {}).get("SnapshotId")
@@ -95,8 +96,9 @@ class OrphanSnapshotCleaner(object):
 
 class AMICleaner(object):
 
-    def __init__(self, ec2=None):
+    def __init__(self, ec2=None, owner_id=None):
         self.ec2 = ec2 or boto3.client('ec2', config=Config(retries={'max_attempts': BOTO3_RETRIES}))
+        self.owner_id = owner_id or OWNER_ID
 
     @staticmethod
     def get_ami_sorting_key(ami):
@@ -141,7 +143,7 @@ class AMICleaner(object):
             return False
 
         my_custom_images = self.ec2.describe_images(
-            Owners=['self'],
+            Owners=[self.owner_id],
             ImageIds=ami_ids
         )
         amis = []

@@ -166,6 +166,7 @@ def test_parse_args_no_args():
     assert parser.mapping_values is None
     assert parser.keep_previous is 4
     assert parser.ami_min_days is -1
+    assert parser.owner_id is "self"
 
 
 def test_parse_args():
@@ -184,6 +185,9 @@ def test_parse_args():
     parser = parse_args(['--ami-min-days', '10', '--full-report'])
     assert parser.ami_min_days == 10
     assert parser.full_report is True
+
+    parser = parse_args(['--owner-id', '123456'])
+    assert parser.owner_id == "123456"
 
 
 def test_print_report():

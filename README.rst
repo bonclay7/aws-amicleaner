@@ -142,6 +142,12 @@ Exclude amis based on tag values
 
     amicleaner --mapping-key tags --mapping-values role env -excluded-mapping-values prod
 
+Specify the aws account owner of the AMIs
+
+ .. code:: bash
+
+     amicleaner --owner-id 1234567
+
 Skip confirmation, can be useful for automation
 
 .. code:: bash
