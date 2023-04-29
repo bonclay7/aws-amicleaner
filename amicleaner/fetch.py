@@ -65,9 +65,10 @@ class Fetcher(object):
         """
 
         resp = self.asg.describe_auto_scaling_groups()
-        zeroed_lcs = [asg.get("LaunchConfigurationName", "")
+        # fetch by launch configuration
+        zeroed_lcs = [asg.get("LaunchConfigurationName")
                       for asg in resp.get("AutoScalingGroups", [])
-                      if asg.get("DesiredCapacity", 0) == 0]
+                      if asg.get("DesiredCapacity", 0) == 0 and asg.get("LaunchConfigurationName", False)]
 
         resp = self.asg.describe_launch_configurations(
             LaunchConfigurationNames=zeroed_lcs
@@ -75,7 +76,29 @@ class Fetcher(object):
 
         amis = [lc.get("ImageId", "")
                 for lc in resp.get("LaunchConfigurations", [])]
+                
+        # fetch by launch template
+        zeroed_lts = self.get_launch_templates(resp)
 
+        amis += self.get_launch_template_amis(zeroed_lts)
+
+        return amis
+
+    def get_launch_templates(self, asg_resp):
+        lts = []
+        for asg in asg_resp.get("AutoScalingGroups", []):
+            if "LaunchTemplate" in asg.keys():
+                lts.append(asg["LaunchTemplate"])
+            elif "MixedInstancesPolicy" in asg.keys():
+                lts.append(asg["LaunchTemplate"]["LaunchTemplateSpecification"])
+        return lts
+
+    def get_launch_template_amis(self, launch_tpls):
+        amis = []
+        for lt in launch_tpls:
+            resp = self.ec2.describe_launch_template_versions(
+                LaunchTemplateId=lt["LaunchTemplateId"], Versions=[lt["Version"]])
+            amis.append(resp["LaunchTemplateVersions"][0]["ImageId"])
         return amis
 
     def fetch_instances(self):
