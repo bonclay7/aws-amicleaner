@@ -41,8 +41,17 @@ class Fetcher(object):
         """
 
         resp = self.asg.describe_auto_scaling_groups()
+
+        # 
+        # Get launch configurations
+        #
         used_lc = (asg.get("LaunchConfigurationName", "")
                    for asg in resp.get("AutoScalingGroups", []))
+
+        #
+        # This cleans up / removes any "" empty groups
+        #
+        used_lc = [i for i in used_lc if i]
 
         resp = self.asg.describe_launch_configurations()
         all_lcs = (lc.get("LaunchConfigurationName", "")
@@ -53,8 +62,46 @@ class Fetcher(object):
         resp = self.asg.describe_launch_configurations(
             LaunchConfigurationNames=unused_lcs
         )
-        amis = [lc.get("ImageId")
+        unused_lcs = [lc.get("ImageId")
                 for lc in resp.get("LaunchConfigurations", [])]
+
+        #
+        # Get launch templates
+        #
+        resp = self.asg.describe_auto_scaling_groups()
+
+        used_lt = []
+        for asg in resp.get("AutoScalingGroups", []):
+            lt = asg.get('LaunchTemplate', '')
+            if lt:
+                ltn = lt.get('LaunchTemplateName', '')
+                ltv = lt.get('Version', '')
+                if ltn and ltv:
+                    respo = self.ec2.describe_launch_template_versions(
+                        LaunchTemplateName=ltn,
+                        Versions=[ltv]
+                    )
+                    used_lt.append(respo.get('LaunchTemplateVersions', '')[0]['LaunchTemplateData']['ImageId'])
+
+
+        resp = self.ec2.describe_launch_templates()
+        all_lts = []
+        for lt in resp.get("LaunchTemplates", []):
+            tn = lt.get('LaunchTemplateName', '')
+            tv = lt.get('LatestVersionNumber', '')
+            if tn and tv:
+                respo = self.ec2.describe_launch_template_versions(
+                    LaunchTemplateName=tn,
+                    Versions=[str(tv)]
+                )
+                all_lts.append(respo.get('LaunchTemplateVersions', '')[0]['LaunchTemplateData']['ImageId'])
+
+        unused_lts = list(set(all_lts) - set(used_lt))
+
+        #
+        # Merge the two lists together and we have our amis list
+        #
+        amis = unused_lcs + list(set(unused_lts) - set(unused_lcs))
 
         return amis
 
@@ -68,6 +115,11 @@ class Fetcher(object):
         zeroed_lcs = [asg.get("LaunchConfigurationName", "")
                       for asg in resp.get("AutoScalingGroups", [])
                       if asg.get("DesiredCapacity", 0) == 0]
+
+        #
+        # This cleans up / removes any "" empty groups
+        #
+        zeroed_lcs = [i for i in zeroed_lcs if i]
 
         resp = self.asg.describe_launch_configurations(
             LaunchConfigurationNames=zeroed_lcs

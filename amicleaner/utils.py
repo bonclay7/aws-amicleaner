@@ -22,22 +22,27 @@ class Printer(object):
         if not candidates:
             return
 
-        groups_table = PrettyTable(["Group name", "candidates"])
+        groups_table = PrettyTable(["Group name", "candidates", "EBS Storage recovered", "Cost Savings"])
+
+        cost_savings = 0
 
         for group_name, amis in candidates.items():
-            groups_table.add_row([group_name, len(amis)])
             eligible_amis_table = PrettyTable(
-                ["AMI ID", "AMI Name", "Creation Date"]
+                ["AMI ID", "AMI Name", "Creation Date", "Size"]
             )
             for ami in amis:
                 eligible_amis_table.add_row([
                     ami.id,
                     ami.name,
-                    ami.creation_date
+                    ami.creation_date,
+                    ami.block_device_mappings[0].volume_size
                 ])
+                cost_savings = cost_savings + ami.block_device_mappings[0].volume_size
+            groups_table.add_row([group_name, len(amis), cost_savings, f"${cost_savings*.1}/mo"])
+
             if full_report:
                 print(group_name)
-                print(eligible_amis_table.get_string(sortby="AMI Name"), "\n\n")
+                print(eligible_amis_table.get_string(sortby="Creation Date"), "\n\n")
 
         print("\nAMIs to be removed:")
         print(groups_table.get_string(sortby="Group name"))
